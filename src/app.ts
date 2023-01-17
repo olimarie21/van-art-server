@@ -1,13 +1,17 @@
-import express, { Application, Request, Response } from 'express'
+import * as express from 'express'
+import bodyParser = require("body-parser")
 
-const app: Application = express()
+class App {
+    public app: express.Application
 
-const port: number = 3000
+    constructor() {
+        this.app = express()
+        this.app.use(bodyParser.json())
+        this.app.use(bodyParser.urlencoded({ extended: false }))
+    }
+}
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello!')
-})
+export default new App().app
 
-app.listen(port, function () {
-    console.log(`App is listening on port ${port} !`)
-})
+
+
