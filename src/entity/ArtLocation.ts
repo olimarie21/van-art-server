@@ -7,7 +7,7 @@ export class ArtLocation {
     @PrimaryColumn()
     id: number
 
-    @Column("varchar")
+    @Column({type: "varchar", nullable: true})
     locationTitle: string
 
     @Column({type: "varchar", nullable: true})
@@ -16,13 +16,13 @@ export class ArtLocation {
     @Column({type: "geography", nullable: false,  spatialFeatureType: 'Point', })
     geolocation: Point
 
-    @Column("varchar")
+    @Column({type: "varchar", nullable: true})
     address: string
 
-    @Column("varchar")
+    @Column({type: "varchar", nullable: true})
     type: string
 
-    @Column("varchar")
+    @Column({type: "varchar", nullable: true})
     primaryMaterial: string
 
     @Column("simple-array")
