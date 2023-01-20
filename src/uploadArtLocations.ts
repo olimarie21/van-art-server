@@ -4,7 +4,6 @@ import { v2 as cloudinary } from 'cloudinary'
 import * as dotenv from "dotenv"
 import { AppDataSource } from './data-source'
 
-
 dotenv.config()
 
 cloudinary.config({
@@ -39,16 +38,14 @@ async function uploadArtLocations() {
             const artistNames: Array<string> = []
 
             for(let i = 0; i < artists.length; i++) {
-                // search cloudinary for img url based on img name
-                let imgSearchTerm: string
 
-                if(filteredData[j].fields.photourl != undefined && ["L1.JPG", "L1.jpg", "L2.jpg", "L2.JPG", "L3", "l1", "l2"].indexOf(filteredData[j].fields.photourl.filename) >= 0) {
-                    imgSearchTerm = filteredData[j].fields.registryid.toString()
-                } else if(filteredData[j].fields.photourl != undefined){
-                    imgSearchTerm = filteredData[j].fields.photourl.filename.replaceAll(" " && "~" && ")", "_").replace('.jpg', "").replace('.JPG', "")
-                } else {
-                    imgSearchTerm = ""
-                }
+                // search cloudinary for img url based on img name
+                const imgSearchTerm: string = filteredData[j].fields.photourl
+                    ? (["L1.JPG", "L1.jpg", "L2.jpg", "L2.JPG", "L3", "l1", "l2"].includes(filteredData[j].fields.photourl.filename)
+                        ? filteredData[j].fields.registryid.toString()
+                        : filteredData[j].fields.photourl.filename.replace(/[^a-zA-Z0-9_.]/g, "_").replace(/\.jpg$/i, ""))
+                    : "";
+
 
                 const imgUrl = imgSearchTerm != "" ? await cloudinary.search
                     .expression(`filename=${imgSearchTerm}`)
@@ -56,7 +53,8 @@ async function uploadArtLocations() {
                     .max_results(1)
                     .execute()
                     .then(result => {
-                        return result.resources[0].url
+                        const url: string = result.resources[0] ? result.resources[0].url : ""
+                        return url
                     }) : ""
 
 
@@ -66,27 +64,13 @@ async function uploadArtLocations() {
                         `https://opendata.vancouver.ca/api/records/1.0/search/?dataset=public-art-artists&q=&refine.artistid=${artists[i]}`
                     )
 
-                    if(data.records[0] != undefined) {
-                        const name =
-                            data.records[0].fields.firstname +
-                            ' ' +
-                            data.records[0].fields.lastname
-    
-                        switch (true) {
-                            case !name.includes('undefined'):
-                                artistNames.push(
-                                    data.records[0].fields.firstname +
-                                        ' ' +
-                                       data.records[0].fields.lastname
-                               )
-                                break
-                            case name.includes('undefined'):
-                                artistNames.push(name.replace('undefined ', ''))
-
-                                break
-                            default:
-                                artistNames.push('Artist Name Unavailable')
-                            }
+                    if (data.records[0]) {
+                        const name = data.records[0].fields.firstname + ' ' + data.records[0].fields.lastname;
+                        artistNames.push(
+                            name.includes('undefined')
+                                ? name.replace('undefined ', '')
+                                : name || 'Artist Name Unavailable'
+                        )
                     }
 
                     artPiece.artists = artistNames
@@ -99,7 +83,7 @@ async function uploadArtLocations() {
                         return 'An unexpected error occurred';
                     }
                 }
-
+                
                 // Set remaining object properties
                 artPiece.id = filteredData[j].fields.registryid
                 artPiece.locationTitle = filteredData[j].fields.sitename || null
@@ -115,14 +99,14 @@ async function uploadArtLocations() {
 
             // add to artLocation Array
             artLocations.push(artPiece)
-                
-            await AppDataSource
+              
+            artPiece.id ? await AppDataSource
                 .createQueryBuilder()
                 .insert()
                 .into(ArtLocation)
                 .values(artPiece)
-                .execute()
-        }
+                .execute() : null
+            } 
 
         console.log('loaded')
         return artLocations
@@ -136,6 +120,5 @@ async function uploadArtLocations() {
         }
     }
 } 
-
 
 export default uploadArtLocations
