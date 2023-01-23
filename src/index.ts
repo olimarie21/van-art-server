@@ -2,7 +2,7 @@ import app from './app'
 import { AppDataSource } from './data-source'
 import { ArtLocation } from './entity/ArtLocation'
 
-const PORT = 4000
+const PORT = 4000 || process.env.PORT
 
 AppDataSource.initialize()
   .then( async () => {
