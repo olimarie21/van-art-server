@@ -2,7 +2,7 @@ import app from './app'
 import { AppDataSource } from './data-source'
 import { ArtLocation } from './entity/ArtLocation'
 
-const PORT = 4000 || process.env.PORT
+const PORT = process.env.PORT || 4000
 
 AppDataSource.initialize()
   .then( async () => {
@@ -16,7 +16,7 @@ AppDataSource.initialize()
       // .execute()
       
       app.listen(PORT, () => {
-        console.info('Express server listening on http://localhost:3000')
+        console.info(`Express server listening on ${PORT}`)
         console.log('connected')
       })
     })
