@@ -38,39 +38,39 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var app_1 = require("./app");
 var data_source_1 = require("./data-source");
+var ArtLocation_1 = require("./entity/ArtLocation");
 var PORT = 4000;
+// uploadArtLocations()
 data_source_1.AppDataSource.initialize()
-    .then(function () {
-    console.log("Data Source has been initialized!");
-})
+    .then(function () { return __awaiter(void 0, void 0, void 0, function () {
+    var artLocations;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                console.log("Data Source has been initialized!");
+                return [4 /*yield*/, data_source_1.AppDataSource.manager.find(ArtLocation_1.ArtLocation)];
+            case 1:
+                artLocations = _a.sent();
+                console.log("Loaded art: ", artLocations.length);
+                // await AppDataSource.createQueryBuilder()
+                // .delete()
+                // .from(ArtLocation)
+                // .where([])
+                // .execute()
+                app_1.default.listen(PORT, function () {
+                    console.info('Express server listening on http://localhost:3000');
+                    console.log('connected');
+                });
+                return [2 /*return*/];
+        }
+    });
+}); })
     .catch(function (err) {
     console.error("Error during Data Source initialization", err);
 });
-app_1.default.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        console.info('Express server listening on http://localhost:3000');
-        console.log('connected');
-        return [2 /*return*/];
-    });
-}); });
-// import { AppDataSource } from "./data-source"
-// import { ArtLocation } from "./entity/ArtLocation"
-// AppDataSource.initialize().then(async () => {
-//     console.log('Inserting a new user into the database...')
-//     const artLocation = new ArtLocation()
-//     artLocation.locationTitle = 'Nelson Park, Mole Hill Greenway'
-//     artLocation.locationDetail = null
-//     artLocation.geolocation = -123.129618, 49.282574
-//     artLocation.address = '1030 Bute Street'
-//     artLocation.type = 'Site-integrated work'
-//     artLocation.artists = ['Nicole May']
-//     artLocation.primaryMaterial = 'Unknown'
-//     artLocation.artDescription = "A custom street light hosting four colourful cut glass panels situated at the heart of Mole Hill in Vancouver's West End."
-//     artLocation.image = '25'
-//     await AppDataSource.manager.save(artLocation)
-//     console.log("Saved a new user with id: " + artLocation.id)
-//     console.log("Loading art from the database...")
-//     const artLocations = await AppDataSource.manager.find(ArtLocation)
-//     console.log("Loaded art: ", artLocations)
-// }).catch(error => console.log(error))
+//     await AppDataSource.createQueryBuilder()
+// .delete()
+// .from(ArtLocation)
+// .where([])
+// .execute()
 //# sourceMappingURL=index.js.map
