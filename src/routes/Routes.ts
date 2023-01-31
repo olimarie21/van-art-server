@@ -19,6 +19,10 @@ class Routes {
 
         app.route('/artLocations')
             .get(this.middleware.getArtLocations)
+
+        
+        app.route('/artLocations/:type')
+            .get(this.middleware.getArtLocationsByType)
     }
 }
 
